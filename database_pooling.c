@@ -43,24 +43,29 @@ int main()
     bool error = false;
 
     // Inicializar as conexões
-    for (int i = 0; i < maxConnections; i++)
-    {
-        connections[i] = initializeConnection(host, user, password, dbname);
+        for (int i = 0; i < maxConnections; i++)
+        {
+            connections[i] = initializeConnection(host, user, password, dbname);
 
-        // Consulta SQL para obter informações sobre as conexões ativas
+            // Consulta SQL para obter informações sobre as conexões ativas
 
+            const char *insertQuery = "INSERT INTO teste (nome, idade) VALUES ('Exemplo', 25);";
+            for (int j = 0; j < 100; j++)
+            {
+                error = mysql_query(connections[i], insertQuery) != 0;
+            }
 
-        const char *insertQuery = "INSERT INTO teste (nome, idade) VALUES ('Exemplo', 25);";
-        for (int j = 0; j < 100; j++) {
-            error = mysql_query(connections[i], insertQuery) != 0;
+            if (error)
+            {
+                fprintf(stderr, "Erro ao executar a consulta de inserção: %s\n", mysql_error(connections[i]));
+                mysql_close(connections[i]);
+                exit(EXIT_FAILURE);
+            }
         }
 
-        if (error) {
-            fprintf(stderr, "Erro ao executar a consulta de inserção: %s\n", mysql_error(connections[i]));
-            mysql_close(connections[i]);
-            exit(EXIT_FAILURE);
+        while(1) {
+            
         }
-    }
 
     // // Realizar operações
 
